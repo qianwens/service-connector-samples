@@ -1,0 +1,25 @@
+{
+    "properties": {
+        "targetService": {
+            "type": "AzureResource",
+            "id": "/subscriptions/d82d7763-8e12-4f39-a7b6-496a983ec2f4/resourceGroups/qianwens/providers/Microsoft.Storage/storageAccounts/qianweneu"
+        },
+        "authInfo": {
+            "authType": "secret"
+        },
+        "scope": "default",
+        "clientType": "dapr",
+        "configurationInfo": {
+            "daprProperties": {
+                "version": "v1",
+                "componentType": "state",
+                "metadata": [
+                    {
+                        "name": "containerName",
+                        "value": "test"
+                    }
+                ]
+            }
+        }
+    }
+}

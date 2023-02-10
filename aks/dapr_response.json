@@ -1,0 +1,8 @@
+{
+    "configurations": [
+      {
+        "name": "MANIFEST",
+        "value": "apiVersion: dapr.io/v1alpha1\r\nkind: Component\r\nmetadata:\r\n  name: testk8sdaprsecretwithkvconnectionsucceeded\r\nspec:\r\n  type: state.azure.blobstorage\r\n  version: v1\r\n  metadata:\r\n  - name: containerName\r\n    value: test\r\n  - name: accountName\r\n    value: servicelinkerteststorage\r\n  - secretKeyRef:\r\n      name: sc-testk8sdaprsecretwithkvconnectionsucceeded-secret\r\n      key: accountkey\r\n    name: accountKey\r\n"
+      }
+    ]
+  }

@@ -1,0 +1,29 @@
+{
+    "properties": {
+        "targetService": {
+            "type": "AzureResource",
+            "id": "/subscriptions/d82d7763-8e12-4f39-a7b6-496a983ec2f4/resourceGroups/qianwens/providers/Microsoft.Storage/storageAccounts/qianweneu"
+        },
+        "authInfo": {
+            "authType": "secret"
+        },
+        "scope": "default",
+        "clientType": "dapr",
+        "secretStore": {
+            "keyVaultId": "/subscriptions/937bc588-a144-4083-8612-5f9ffbbddb14/resourceGroups/servicelinker-test-linux-group/providers/Microsoft.KeyVault/vaults/test-scextension-kv"
+        },
+        "configurationInfo": {
+            "action": "optOut",
+            "daprProperties": {
+                "version": "v1",
+                "componentType": "state",
+                "metadata": [
+                    {
+                        "name": "containerName",
+                        "value": "test"
+                    }
+                ]
+            }
+        }
+    }
+}

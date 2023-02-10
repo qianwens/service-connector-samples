@@ -1,0 +1,16 @@
+{
+    "properties": {
+        "targetService": {
+            "type": "AzureResource",
+            "id": "/subscriptions/937bc588-a144-4083-8612-5f9ffbbddb14/resourceGroups/servicelinker-test-linux-group/providers/Microsoft.KeyVault/vaults/test-scextension-kv",
+            "resourceProperties": {
+                "type": "KeyVault",
+                "connectAsKubernetesCsiDriver": true
+            }  
+        },
+        "authInfo": {
+            "authType": "userAssignedIdentity"
+        },
+        "scope": "default"
+    }
+}
