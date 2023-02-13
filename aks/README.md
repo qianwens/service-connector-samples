@@ -50,3 +50,7 @@ az rest --method post --url https://management.azure.com/subscriptions/d82d7763-
 
 generateConfiguration API returns the manifest of dapr component
 Check [Sample dapr manifest reponse](dapr_response.json)
+
+## get dapr configurations
+az rest --method get --url "https://management.azure.com/providers/Microsoft.ServiceLinker/configurationNames?api-version=2022-11-01-preview&filter=ClientType eq 'dapr'"
+
