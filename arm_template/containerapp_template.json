@@ -1,0 +1,163 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "containerapps_name": {
+            "defaultValue": "qianwen-demo-mi",
+            "type": "String"
+        },
+        "managedEnvironments_servicelinker_containerapp_env_externalid": {
+            "defaultValue": "/subscriptions/937bc588-a144-4083-8612-5f9ffbbddb14/resourceGroups/servicelinker-test-linux-group/providers/Microsoft.App/managedEnvironments/servicelinker-containerapp-env",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+            "name": "[parameters('identityName')]",
+            "apiVersion": "2018-11-30",
+            "location": "[resourceGroup().location]"
+        },
+        {
+            "type": "Microsoft.App/containerapps",
+            "apiVersion": "2022-03-01",
+            "name": "[parameters('containerapps_name')]",
+            "location": "East US",
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('identityName'))]": {}
+                }
+            },
+            "properties": {
+                "managedEnvironmentId": "[parameters('managedEnvironments_servicelinker_containerapp_env_externalid')]",
+                "configuration": {
+                    "secrets": [
+                        {
+                            "name": "azure-storageblob-resourceendpoint"
+                        },
+                        {
+                            "name": "azure-storageblob-clientid"
+                        },
+                        {
+                            "name": "qianwenacrazurecrio-qianwenacr"
+                        }
+                    ],
+                    "activeRevisionsMode": "Multiple",
+                    "ingress": {
+                        "external": true,
+                        "targetPort": 80,
+                        "transport": "Auto",
+                        "traffic": [
+                            {
+                                "revisionName": "[concat(parameters('containerapps_qianwen_demo_mi_name'), '--b89dodp')]",
+                                "weight": 100
+                            }
+                        ],
+                        "allowInsecure": false
+                    },
+                    "registries": [
+                        {
+                            "server": "qianwenacr.azurecr.io",
+                            "username": "qianwenacr",
+                            "passwordSecretRef": "qianwenacrazurecrio-qianwenacr"
+                        }
+                    ]
+                },
+                "template": {
+                    "containers": [
+                        {
+                            "image": "qianwenacr.azurecr.io/sample/appservice-storage-mi:v1",
+                            "name": "[parameters('containerapps_name')]",
+                            "env": [
+                                {
+                                    "name": "AZURE_STORAGEBLOB_RESOURCEENDPOINT",
+                                    "secretRef": "azure-storageblob-resourceendpoint"
+                                },
+                                {
+                                    "name": "AZURE_STORAGEBLOB_CLIENTID",
+                                    "secretRef": "azure-storageblob-clientid"
+                                }
+                            ],
+                            "resources": {
+                                "cpu": 0.5,
+                                "memory": "1Gi"
+                            },
+                            "probes": []
+                        }
+                    ],
+                    "scale": {
+                        "minReplicas": 0,
+                        "maxReplicas": 10
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2022-05-01",
+            "name": "[parameters('storageAccounts_name')]",
+            "location": "eastus",
+            "sku": {
+                "name": "Standard_RAGRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "dnsEndpointType": "Standard",
+                "defaultToOAuthAuthentication": false,
+                "publicNetworkAccess": "Enabled",
+                "allowCrossTenantReplication": true,
+                "minimumTlsVersion": "TLS1_2",
+                "allowBlobPublicAccess": true,
+                "allowSharedKeyAccess": true,
+                "networkAcls": {
+                    "resourceAccessRules": [],
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [
+                        {
+                            "value": "[reference(resourceId('Microsoft.App/containerapps', variables('containerapps_name')), '2022-03-01', 'Full').outboundIpAddresses[0]]",
+                            "action": "Allow"
+                        },
+                        {
+                            "value": "[reference(resourceId('Microsoft.App/containerapps', variables('containerapps_name')), '2022-03-01', 'Full').outboundIpAddresses[1]]",
+                            "action": "Allow"
+                        }
+                    ],
+                    "defaultAction": "Deny"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                    "requireInfrastructureEncryption": false,
+                    "services": {
+                        "file": {
+                            "keyType": "Account",
+                            "enabled": true
+                        },
+                        "blob": {
+                            "keyType": "Account",
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Hot"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[parameters('roleNameGuid')]",
+            "scope": "[concat('Microsoft.Storage/storageAccounts', '/', variables('storageName'))]",
+            "dependsOn": [
+                "[variables('storageName')]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1')]",
+                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), '2018-11-30', 'Full').principalId]"
+            }
+        }
+    ]
+}
