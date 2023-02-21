@@ -1,0 +1,5 @@
+{        
+    "customizedKeys": {
+        "AZURE_STORAGEBLOB_RESOURCEENDPOINT": "endpoint"
+    }
+}

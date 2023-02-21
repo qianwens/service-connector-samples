@@ -8,7 +8,8 @@
             "authType": "userAssignedIdentity",
             "clientId": "f0dd5dc3-9844-4727-bf0a-07e4d02a9457",
             "subscriptionId": "d82d7763-8e12-4f39-a7b6-496a983ec2f4",
-            "roles": ["2a2b9908-6ea1-4ae2-8e65-a410df84e7d1"]
+            "roles": ["2a2b9908-6ea1-4ae2-8e65-a410df84e7d1"],
+            "deleteOrUpdateBehavior": "ForcedCleanup"
         },
         "configurationInfo": {
             "action": "optOut"
